@@ -1,0 +1,276 @@
+<!DOCTYPE HTML PUBLIC "-//W3C//DTD HTML 4.0 Transitional//EN">
+<!-- saved from url=(0033)http://nivlam.com/char/stats.html -->
+<HTML><HEAD><TITLE>Stat Calculator</TITLE>
+<link rel="icon" type="image/x-icon" href="favicon.png">
+<META http-equiv=Content-Type content="text/html; charset=gb2312">
+<STYLE type=text/css>INPUT {
+	FONT-SIZE: 12px; FONT-FAMILY: arial
+}
+</STYLE>
+
+<SCRIPT language=Javascript type=text/javascript>
+<!--
+
+//Please do not remove. Created by nivlam.com
+
+//Initlal setTimeout ID that determines how long the mouse has to be held down
+//before it does something.
+var timerID = 0;
+
+//Second setTimeout ID that determines how fast it loops.	
+var timerID2 = 0;
+
+//Available stat points.
+var avail = 0;
+
+//var a: 0 is add, 1 is subtract
+//var id: id of element  
+function StartT(a, id)
+{
+	if (a == 0)
+		timerID = setTimeout("AddT('" + id + "')", 500);
+	else
+		timerID = setTimeout("SubT('" + id + "')", 500);
+}
+
+//Clears both setTimeout timers when you release mouse or move away from button.
+function EndT()
+{
+	clearTimeout(timerID);
+	clearTimeout(timerID2);
+}
+
+//Function that keeps adding until you call EndT.
+function AddT(id)
+{
+	//Adds three stats, 1 str, and 1 int every level.
+	if (id == 'lv')
+	{
+		document.getElementById('statAvail').value = parseInt(document.getElementById('statAvail').value) + 3;
+		document.getElementById('str').value = parseInt(document.getElementById('str').value) + 1;
+		document.getElementById('int').value = parseInt(document.getElementById('int').value) + 1;
+	}
+	//Otherwise it subtracts from your total available stat points.
+	else
+		document.getElementById('statAvail').value = parseInt(document.getElementById('statAvail').value) - 1;
+
+	//Adds 1 to whatever element.
+	document.getElementById(id).value = parseInt(document.getElementById(id).value) + 1;
+	
+	//Update and set timer to start looping.
+	UpdateValues();
+	timerID2 = setTimeout("AddT('" + id + "')", 50);
+}
+
+//Function that keeps subtracting until you call EndT.
+function SubT(id)
+{
+	if ((id == "str" || id == "int") && parseInt(document.getElementById(id).value) <= 20)
+		return;
+	else if (id == "lv" && parseInt(document.getElementById(id).value) <= 1)
+		return;
+
+	//Subtracts three stats, 1 str, and 1 int every time you delevel.
+	if (id == 'lv')
+	{
+		document.getElementById('statAvail').value = parseInt(document.getElementById('statAvail').value) - 3;
+		document.getElementById('str').value = parseInt(document.getElementById('str').value) - 1;
+		document.getElementById('int').value = parseInt(document.getElementById('int').value) - 1;
+	}
+	//Otherwise it adds to your total available stat points.
+	else
+		document.getElementById('statAvail').value = parseInt(document.getElementById('statAvail').value) + 1;
+
+	//Subtracts 1 from whatever.
+	document.getElementById(id).value = parseInt(document.getElementById(id).value) - 1;
+	
+	//Update and set timer to start looping.
+	UpdateValues();
+	timerID2 = setTimeout("SubT('" + id + "')", 50);
+}
+
+//Adds 1 str and subtracts one stat point.
+function AddStr_click()
+{
+	document.getElementById('statAvail').value = parseInt(document.getElementById('statAvail').value) - 1;
+	document.getElementById('str').value = parseInt(document.getElementById('str').value) + 1; 
+	
+	UpdateValues(); 
+}
+
+//Adds 1 int and subtracts 1 stat point.
+function AddInt_click()
+{
+	document.getElementById('statAvail').value = parseInt(document.getElementById('statAvail').value) - 1;
+	document.getElementById('int').value = parseInt(document.getElementById('int').value) + 1; 
+	
+	UpdateValues(); 
+}
+
+//Adds 1 level, 3 stat points, 1 str, 1 int.
+function AddLevel_click()
+{
+	document.getElementById('lv').value = parseInt(document.getElementById('lv').value) + 1; 
+	document.getElementById('statAvail').value = parseInt(document.getElementById('statAvail').value) + 3; 
+	document.getElementById('str').value = parseInt(document.getElementById('str').value) + 1; 
+	document.getElementById('int').value = parseInt(document.getElementById('int').value) + 1;
+	
+	UpdateValues();
+}
+
+//Subtract
+function SubStr_click()
+{
+	if (parseInt(document.getElementById('str').value) <= 20) 
+		return; 
+		
+	document.getElementById('statAvail').value = parseInt(document.getElementById('statAvail').value) + 1;
+	document.getElementById('str').value = parseInt(document.getElementById('str').value) - 1; 
+	
+	UpdateValues();
+}
+ 
+//Subtract
+function SubInt_click()
+{
+	if (parseInt(document.getElementById('int').value) <= 20) 
+		return; 
+		
+	document.getElementById('statAvail').value = parseInt(document.getElementById('statAvail').value) + 1;
+	document.getElementById('int').value = parseInt(document.getElementById('int').value) - 1; 
+	
+	UpdateValues(); 
+}
+
+//Subtract
+function SubLevel_click()
+{
+	if (parseInt(document.getElementById('lv').value) <= 1) 
+		return; 
+		
+	document.getElementById('lv').value = parseInt(document.getElementById('lv').value) - 1; 
+	document.getElementById('statAvail').value = parseInt(document.getElementById('statAvail').value) - 3; 
+	document.getElementById('str').value = parseInt(document.getElementById('str').value) - 1; 
+	document.getElementById('int').value = parseInt(document.getElementById('int').value) - 1;
+	
+	UpdateValues();
+}
+
+//Calculates your HP, MP, physical balance, and magical balance.
+function UpdateValues()
+{
+	var maxstat =  28 + document.getElementById('lv').value * 4;
+	document.getElementById('phy').value = parseInt(100 - (100 * 2/3 * (maxstat - document.getElementById('str').value ) / maxstat));
+	document.getElementById('mag').value = parseInt(100 * document.getElementById('int').value / maxstat);
+		
+	document.getElementById('hp').value = parseInt(Math.pow(1.02,(parseInt(document.getElementById('lv').value) - 1)) * parseInt(document.getElementById('str').value) * 10); 
+	document.getElementById('mp').value = parseInt(Math.pow(1.02,(parseInt(document.getElementById('lv').value) - 1)) * parseInt(document.getElementById('int').value) * 10); 
+}
+
+//-->
+</SCRIPT>
+
+<META content="MSHTML 6.00.6000.16587" name=GENERATOR></HEAD>
+<BODY bgColor=#000000><!-- 
+	
+	Do not copy and paste the following code into your page.
+	Instead, make sure that stats.html and stats.png are located
+	in the same directory. Then add the following link to your page:
+	
+	<a href="javascript:void(0);" onclick="window.open('stats.html','SilkroadStats','status=0,toolbar=0,location=0,menubar=0,directories=0,resizeable=0,scrollbars=0,width=363,height=255'); ">Click here</a>
+	
+	-->
+<DIV id=content><!-- Please do not remove.  Created by nivlam.com --><IMG 
+style="LEFT: 0px; POSITION: absolute; TOP: 0px" height=255 alt=statAvail 
+src="attribute/stats.png" draggable="false" width=363 useMap=#stats border=0> <MAP 
+id=stats name=stats><AREA onmouseup=EndT() onmousedown="StartT(0, 'str')" 
+  onclick=AddStr_click(); onmouseout=EndT() shape=RECT alt="Add STR" 
+  coords=44,110,61,127 href="javascript:void(0)"><AREA onmouseup=EndT() 
+  onmousedown="StartT(0, 'int')" onclick=AddInt_click(); onmouseout=EndT() 
+  shape=RECT alt="Add INT" coords=44,139,61,156 href="javascript:void(0)"><AREA 
+  onmouseup=EndT() onmousedown="StartT(0, 'lv')" onclick=AddLevel_click(); 
+  onmouseout=EndT() shape=RECT alt="Add Level" coords=319,30,336,47 
+  href="javascript:void(0)"><AREA onmouseup=EndT() 
+  onmousedown="StartT(1, 'str')" onclick=SubStr_click(); onmouseout=EndT() 
+  shape=RECT alt="Subtract STR" coords=63,110,80,127 
+  href="javascript:void(0)"><AREA onmouseup=EndT() 
+  onmousedown="StartT(1, 'int')" onclick=SubInt_click(); onmouseout=EndT() 
+  shape=RECT alt="Subtract INT" coords=63,139,80,156 
+  href="javascript:void(0)"><AREA onmouseup=EndT() onmousedown="StartT(1, 'lv')" 
+  onclick=SubLevel_click(); onmouseout=EndT() shape=RECT alt="Subtract Level" 
+  coords=338,30,355,47 href="javascript:void(0)"></MAP><INPUT id=lv 
+style="BORDER-RIGHT: medium none; BORDER-TOP: medium none; LEFT: 340px; BORDER-LEFT: medium none; WIDTH: 2em; COLOR: #ffe27b; BORDER-BOTTOM: medium none; POSITION: absolute; TOP: 7px; BACKGROUND-COLOR: transparent; TEXT-ALIGN: left" 
+readOnly value=1> <INPUT id=statAvail 
+style="BORDER-RIGHT: medium none; BORDER-TOP: medium none; LEFT: 85px; BORDER-LEFT: medium none; WIDTH: 2.5em; COLOR: #ffd953; BORDER-BOTTOM: medium none; POSITION: absolute; TOP: 84px; BACKGROUND-COLOR: transparent; TEXT-ALIGN: center" 
+readOnly value=0> <INPUT id=str 
+style="BORDER-RIGHT: medium none; BORDER-TOP: medium none; LEFT: 85px; BORDER-LEFT: medium none; WIDTH: 2.5em; COLOR: white; BORDER-BOTTOM: medium none; POSITION: absolute; TOP: 110px; BACKGROUND-COLOR: transparent; TEXT-ALIGN: center" 
+readOnly value=20> <INPUT id=int 
+style="BORDER-RIGHT: medium none; BORDER-TOP: medium none; LEFT: 85px; BORDER-LEFT: medium none; WIDTH: 2.5em; COLOR: white; BORDER-BOTTOM: medium none; POSITION: absolute; TOP: 139px; BACKGROUND-COLOR: transparent; TEXT-ALIGN: center" 
+readOnly value=20> <INPUT id=phy 
+style="BORDER-RIGHT: medium none; BORDER-TOP: medium none; LEFT: 100px; BORDER-LEFT: medium none; WIDTH: 2.5em; COLOR: white; BORDER-BOTTOM: medium none; POSITION: absolute; TOP: 212px; BACKGROUND-COLOR: transparent; TEXT-ALIGN: center" 
+readOnly value=75> <INPUT id=mag 
+style="BORDER-RIGHT: medium none; BORDER-TOP: medium none; LEFT: 295px; BORDER-LEFT: medium none; WIDTH: 2.5em; COLOR: white; BORDER-BOTTOM: medium none; POSITION: absolute; TOP: 212px; BACKGROUND-COLOR: transparent; TEXT-ALIGN: center" 
+readOnly value=62> <INPUT id=hp 
+style="BORDER-RIGHT: medium none; BORDER-TOP: medium none; LEFT: 210px; BORDER-LEFT: medium none; WIDTH: 5em; COLOR: white; BORDER-BOTTOM: medium none; POSITION: absolute; TOP: 110px; BACKGROUND-COLOR: transparent; TEXT-ALIGN: center" 
+readOnly value=200> <INPUT id=mp 
+style="BORDER-RIGHT: medium none; BORDER-TOP: medium none; LEFT: 210px; BORDER-LEFT: medium none; WIDTH: 5em; COLOR: white; BORDER-BOTTOM: medium none; POSITION: absolute; TOP: 139px; BACKGROUND-COLOR: transparent; TEXT-ALIGN: center" 
+readOnly value=200> </DIV>
+<SCRIPT type=text/javascript>
+var gaJsHost = (("https:" == document.location.protocol) ? "https://ssl." : "http://www.");
+document.write(unescape("%3Cscript src='" + gaJsHost + "google-analytics.com/ga.js' type='text/javascript'%3E%3C/script%3E"));
+</SCRIPT>
+
+<SCRIPT type=text/javascript>
+var pageTracker = _gat._getTracker("UA-3435244-1");
+pageTracker._initData();
+pageTracker._trackPageview();
+</SCRIPT>
+
+
+
+<style>
+  body {
+    background-color: #131416;
+    display: flex;
+    justify-content: center; /* yatay ortala */
+    align-items: center;    /* dikey ortala */
+    height: 100vh;          /* tüm viewport yüksekli?i */
+    margin: 0;
+  }
+
+  #content {
+    position: relative; /* absolute i? elemanlar? i?in */
+    width: 363px;
+    height: 255px;
+  }
+
+  /* input stillerini kü?ültmek yerine content div’e g?re konumland?raca??z */
+  input {
+    border: none;
+    background-color: transparent;
+    color: white;
+    text-align: center;
+    font-size: 12px;
+    position: absolute;
+  }
+</style>
+
+
+
+<script>
+document.addEventListener("contextmenu", function(e){
+    e.preventDefault();
+});
+
+document.onkeydown = function(e) {
+    if (e.key == "F12" || 
+        (e.ctrlKey && e.shiftKey && (e.key == "I" || e.key == "J")) ||
+        (e.ctrlKey && e.key == "U")) {
+        e.preventDefault();
+    }
+};
+</script>
+
+
+
+</BODY></HTML>
